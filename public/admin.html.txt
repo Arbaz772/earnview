@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EarnView</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen p-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+                    <p class="text-gray-600">Platform revenue & statistics</p>
+                </div>
+                <button onclick="logout()" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700">
+                    Logout
+                </button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="text-sm text-gray-600 mb-2">Today's Profit</div>
+                    <p class="text-3xl font-bold text-green-600">$<span id="todayProfit">0.00</span></p>
+                    <p class="text-xs text-gray-500 mt-2">
+                        Revenue: $<span id="todayRevenue">0.00</span> | 
+                        Paid: $<span id="todayPaid">0.00</span>
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="text-sm text-gray-600 mb-2">Total Users</div>
+                    <p class="text-3xl font-bold text-blue-600" id="totalUsers">0</p>
+                    <p class="text-xs text-gray-500 mt-2">
+                        <span id="activeToday">0</span> active today
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="text-sm text-gray-600 mb-2">Ad Views Today</div>
+                    <p class="text-3xl font-bold text-purple-600" id="todayViews">0</p>
+                    <p class="text-xs text-gray-500 mt-2">Avg $0.10 CPM revenue</p>
+                </div>
+            </div>
+
+            <!-- All Time Stats -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">All Time Statistics</h3>
+                <div class="grid grid-cols-3 gap-6">
+                    <div>
+                        <div class="text-sm text-gray-600 mb-1">Total Revenue</div>
+                        <div class="text-2xl font-bold text-gray-800">$<span id="allRevenue">0.00</span></div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600 mb-1">Total Paid Out</div>
+                        <div class="text-2xl font-bold text-red-600">$<span id="allPaid">0.00</span></div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600 mb-1">Total Profit</div>
+                        <div class="text-2xl font-bold text-green-600">$<span id="allProfit">0.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Withdrawals -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Pending Withdrawals</h3>
+                    <button onclick="loadWithdrawals()" class="text-blue-600 text-sm hover:underline">Refresh</button>
+                </div>
+                <div id="withdrawalsList" class="space-y-4">
+                    <p class="text-gray-500 text-center py-8">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const ADMIN_USER = 'admin'; // Change this
+        const ADMIN_PASS = 'admin123'; // Change this
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/admin/stats`, {
+                    headers: {
+                        'username': ADMIN_USER,
+                        'password': ADMIN_PASS
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Today's stats
+                    document.getElementById('todayProfit').textContent = data.today.profit.toFixed(2);
+                    document.getElementById('todayRevenue').textContent = data.today.revenue.toFixed(2);
+                    document.getElementById('todayPaid').textContent = data.today.paid_out.toFixed(2);
+                    document.getElementById('todayViews').textContent = data.today.ad_views;
+
+                    // User stats
+                    document.getElementById('totalUsers').textContent = data.totalUsers;
+                    document.getElementById('activeToday').textContent = data.activeToday;
+
+                    // All time stats
+                    document.getElementById('allRevenue').textContent = data.allTime.revenue.toFixed(2);
+                    document.getElementById('allPaid').textContent = data.allTime.paidOut.toFixed(2);
+                    document.getElementById('allProfit').textContent = data.allTime.profit.toFixed(2);
+                }
+            } catch (err) {
+                console.error('Load stats error:', err);
+            }
+        }
+
+        async function loadWithdrawals() {
+            try {
+                const response = await fetch(`${API_URL}/admin/withdrawals`, {
+                    headers: {
+                        'username': ADMIN_USER,
+                        'password': ADMIN_PASS
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const container = document.getElementById('withdrawalsList');
+                    
+                    if (data.withdrawals.length === 0) {
+                        container.innerHTML = '<p class="text-gray-500 text-center py-8">No pending withdrawals</p>';
+                        return;
+                    }
+
+                    container.innerHTML = data.withdrawals.map(w => `
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <div class="font-semibold text-gray-800">${w.username}</div>
+                                    <div class="text-sm text-gray-600">${w.email}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-green-600">$${w.amount.toFixed(2)}</div>
+                                    <div class="text-xs text-gray-500">${new Date(w.created_at).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-3">
+                                PayPal: ${w.paypal_email}
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="processWithdrawal(${w.id}, 'completed')" class="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+                                    Approve
+                                </button>
+                                <button onclick="processWithdrawal(${w.id}, 'failed')" class="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
+                                    Reject
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error('Load withdrawals error:', err);
+            }
+        }
+
+        async function processWithdrawal(id, status) {
+            const notes = prompt('Enter notes (transaction ID or reason):');
+            if (!notes) return;
+
+            try {
+                const response = await fetch(`${API_URL}/admin/withdrawals/${id}/process`, {
+                    method: 'POST',
+                    headers: {
+                        'username': ADMIN_USER,
+                        'password': ADMIN_PASS,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status,
+                        transactionId: status === 'completed' ? notes : null,
+                        notes
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Withdrawal updated!');
+                    loadWithdrawals();
+                    loadStats();
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        function logout() {
+            if (confirm('Logout from admin panel?')) {
+                window.location.href = '/';
+            }

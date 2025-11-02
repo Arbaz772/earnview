@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - EarnView</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 shadow-lg">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h1 class="text-2xl font-bold">Welcome, <span id="username">User</span>!</h1>
+                    <p class="text-purple-100 text-sm">Start watching ads to earn money</p>
+                </div>
+                <button onclick="logout()" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm">
+                    Logout
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/10 backdrop-blur rounded-lg p-4">
+                    <div class="text-sm mb-1">Balance</div>
+                    <p class="text-3xl font-bold">$<span id="balance">0.00</span></p>
+                </div>
+                <div class="bg-white/10 backdrop-blur rounded-lg p-4">
+                    <div class="text-sm mb-1">Today</div>
+                    <p class="text-3xl font-bold"><span id="adsToday">0</span>/20</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto p-6 space-y-6">
+        <!-- Ad Viewing Section -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Watch Ads & Earn</h2>
+            <div id="adContainer" class="text-center">
+                <!-- Adsterra ad will be injected here -->
+                <div class="bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg p-12 mb-4">
+                    <svg class="mx-auto mb-4 text-purple-600" width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-gray-600 mb-6">Click below to watch a video ad and earn $0.05</p>
+                    <button id="watchAdBtn" onclick="watchAd()" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold text-lg hover:shadow-lg transition">
+                        Watch Ad Now
+                    </button>
+                    <p class="text-sm text-gray-500 mt-4">Ads remaining: <span id="adsRemaining">20</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white rounded-xl shadow-md p-4">
+                <div class="text-green-600 font-semibold mb-2">Total Earned</div>
+                <p class="text-2xl font-bold text-gray-800">$<span id="totalEarned">0.00</span></p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-4">
+                <div class="text-blue-600 font-semibold mb-2">Ads Watched</div>
+                <p class="text-2xl font-bold text-gray-800"><span id="adsWatched">0</span> today</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-4">
+                <div class="text-purple-600 font-semibold mb-2">Referral Code</div>
+                <p class="text-2xl font-bold text-gray-800" id="referralCode">----</p>
+            </div>
+        </div>
+
+        <!-- Withdrawal -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Withdraw Earnings</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">PayPal Email</label>
+                    <input type="email" id="paypalEmail" class="w-full px-3 py-2 border rounded-lg" placeholder="your@email.com">
+                </div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-600 mb-1">Available: $<span id="withdrawBalance">0.00</span></p>
+                        <p class="text-sm text-gray-500">Minimum: $5.00</p>
+                    </div>
+                    <button onclick="requestWithdrawal()" class="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700">
+                        Withdraw
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info -->
+        <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200">
+            <h3 class="font-semibold text-gray-800 mb-3">💡 How It Works</h3>
+            <ul class="space-y-2 text-sm text-gray-700">
+                <li>• Watch 15-30 second video ads to earn $0.05 each</li>
+                <li>• Daily limit: 20 ads ($1.00/day maximum)</li>
+                <li>• Refer friends and earn 10% of their earnings</li>
+                <li>• Withdraw via PayPal once you reach $5.00</li>
+                <li>• Payments processed within 24-48 hours</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Adsterra Ad Code (REPLACE WITH YOUR ACTUAL CODE) -->
+    <script type="text/javascript">
+        atOptions = {
+            'key' : 'YOUR_ADSTERRA_KEY_HERE',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+        };
+    </script>
+    <script type="text/javascript" src="//www.topcreativeformat.com/YOUR_KEY/invoke.js"></script>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let token = localStorage.getItem('token');
+        let adWatching = false;
+
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        async function loadProfile() {
+            try {
+                const response = await fetch(`${API_URL}/user/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const user = data.user;
+                    document.getElementById('username').textContent = user.username;
+                    document.getElementById('balance').textContent = user.balance.toFixed(2);
+                    document.getElementById('withdrawBalance').textContent = user.balance.toFixed(2);
+                    document.getElementById('totalEarned').textContent = user.total_earned.toFixed(2);
+                    document.getElementById('adsToday').textContent = user.adsWatchedToday;
+                    document.getElementById('adsWatched').textContent = user.adsWatchedToday;
+                    document.getElementById('adsRemaining').textContent = 20 - user.adsWatchedToday;
+                    document.getElementById('referralCode').textContent = user.referral_code;
+                    
+                    if (user.paypal_email) {
+                        document.getElementById('paypalEmail').value = user.paypal_email;
+                    }
+
+                    if (user.adsWatchedToday >= 20) {
+                        document.getElementById('watchAdBtn').disabled = true;
+                        document.getElementById('watchAdBtn').textContent = 'Daily Limit Reached';
+                        document.getElementById('watchAdBtn').classList.add('bg-gray-400', 'cursor-not-allowed');
+                    }
+                }
+            } catch (err) {
+                console.error('Load profile error:', err);
+            }
+        }
+
+        async function watchAd() {
+            if (adWatching) return;
+            adWatching = true;
+
+            const btn = document.getElementById('watchAdBtn');
+            btn.disabled = true;
+            btn.textContent = 'Loading Ad...';
+
+            // Simulate ad watching (15 seconds)
+            let countdown = 15;
+            const timer = setInterval(() => {
+                btn.textContent = `Watching Ad... ${countdown}s`;
+                countdown--;
+
+                if (countdown < 0) {
+                    clearInterval(timer);
+                    creditAdView();
+                }
+            }, 1000);
+        }
+
+        async function creditAdView() {
+            try {
+                const response = await fetch(`${API_URL}/ads/credit`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ adType: 'video' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Earned $${data.earned.toFixed(2)}! New balance: $${data.balance.toFixed(2)}`);
+                    loadProfile();
+                } else {
+                    alert(data.error || 'Failed to credit ad view');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                adWatching = false;
+                const btn = document.getElementById('watchAdBtn');
+                btn.disabled = false;
+                btn.textContent = 'Watch Ad Now';
+            }
+        }
+
+        async function requestWithdrawal() {
+            const paypalEmail = document.getElementById('paypalEmail').value;
+            
+            if (!paypalEmail) {
+                alert('Please enter your PayPal email');
+                return;
+            }
+
+            if (!confirm('Request withdrawal? This will be processed within 24-48 hours.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/withdraw/request`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ method: 'paypal', paypalEmail })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    loadProfile();
+                } else {
+                    alert(data.error || 'Withdrawal failed');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+
+        loadProfile();
+        setInterval(loadProfile, 30000); // Refresh every 30 seconds
+    </script>
+</body>
+</html>

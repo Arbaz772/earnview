@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: earnview_db
+    restart: always
+    environment:
+      POSTGRES_USER: earnview
+      POSTGRES_PASSWORD: Password123@
+      POSTGRES_DB: earnview
+    volumes:
+      - earnview_postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    networks:
+      - earnview_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U earnview"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: earnview_app
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: earnview
+      DB_PASSWORD: Password123@
+      DB_NAME: earnview
+      JWT_SECRET: 329702cd52ea71d92fd35e130085db195ee30158ffbbe981d8743956fff8ea13
+      ADSTERRA_PUBLISHER_ID: ${ADSTERRA_PUBLISHER_ID}
+      ADSTERRA_API_KEY: ${ADSTERRA_API_KEY}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+    ports:
+      - "127.0.0.1:3001:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - earnview_network
+    volumes:
+      - ./public:/app/public
+
+volumes:
+  earnview_postgres_data:
+    driver: local
+
+networks:
+  earnview_network:
+    driver: bridge
