@@ -5,8 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - EarnView</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .ad-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .ad-modal.active {
+            display: flex;
+        }
+        .ad-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 90%;
+            text-align: center;
+        }
+        .countdown-timer {
+            font-size: 48px;
+            font-weight: bold;
+            color: #7c3aed;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
+    <!-- Header -->
     <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 shadow-lg">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-4">
@@ -31,7 +63,9 @@
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="max-w-4xl mx-auto p-6 space-y-6">
+        <!-- Watch Ads Section -->
         <div class="bg-white rounded-xl shadow-md p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Watch Ads & Earn</h2>
             <div id="adContainer" class="text-center">
@@ -49,6 +83,7 @@
             </div>
         </div>
 
+        <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-white rounded-xl shadow-md p-4">
                 <div class="text-green-600 font-semibold mb-2">Total Earned</div>
@@ -64,6 +99,7 @@
             </div>
         </div>
 
+        <!-- Withdrawal Section -->
         <div class="bg-white rounded-xl shadow-md p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Withdraw Earnings</h2>
             <div class="space-y-4">
@@ -83,6 +119,7 @@
             </div>
         </div>
 
+        <!-- How It Works -->
         <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200">
             <h3 class="font-semibold text-gray-800 mb-3">💡 How It Works</h3>
             <ul class="space-y-2 text-sm text-gray-700">
@@ -92,6 +129,21 @@
                 <li>• Withdraw via PayPal once you reach $5.00</li>
                 <li>• Payments processed within 24-48 hours</li>
             </ul>
+        </div>
+    </div>
+
+    <!-- Ad Modal Overlay -->
+    <div id="adModal" class="ad-modal">
+        <div class="ad-content">
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Please Watch This Ad</h3>
+            <p class="text-gray-600 mb-4">Wait for the timer to complete...</p>
+            <div class="countdown-timer" id="adCountdown">15</div>
+            <p class="text-sm text-gray-500 mb-6">You will earn $0.05 after watching</p>
+            
+            <!-- Adsterra Ad Container -->
+            <div id="adsterraContainer" class="my-4">
+                <script type='text/javascript' src='//pl27973831.effectivegatecpm.com/00/e7/c9/00e7c9685187ee43dcbe0b25665b2e76.js'></script>
+            </div>
         </div>
     </div>
 
@@ -115,4 +167,135 @@
                     const user = data.user;
                     document.getElementById('username').textContent = user.username;
                     document.getElementById('balance').textContent = user.balance.toFixed(2);
-                    document.getElementById('withdrawBalance').textContent = user.b
+                    document.getElementById('withdrawBalance').textContent = user.balance.toFixed(2);
+                    document.getElementById('totalEarned').textContent = user.total_earned.toFixed(2);
+                    document.getElementById('adsToday').textContent = user.adsWatchedToday;
+                    document.getElementById('adsWatched').textContent = user.adsWatchedToday;
+                    document.getElementById('adsRemaining').textContent = 500 - user.adsWatchedToday;
+                    document.getElementById('referralCode').textContent = user.referral_code;
+                    
+                    if (user.paypal_email) {
+                        document.getElementById('paypalEmail').value = user.paypal_email;
+                    }
+
+                    if (user.adsWatchedToday >= 500) {
+                        document.getElementById('watchAdBtn').disabled = true;
+                        document.getElementById('watchAdBtn').textContent = 'Daily Limit Reached';
+                        document.getElementById('watchAdBtn').classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-blue-600', 'hover:shadow-lg');
+                        document.getElementById('watchAdBtn').classList.add('bg-gray-400', 'cursor-not-allowed');
+                    }
+                }
+            } catch (err) {
+                console.error('Load profile error:', err);
+            }
+        }
+
+        async function watchAd() {
+            if (adWatching) return;
+            adWatching = true;
+
+            const btn = document.getElementById('watchAdBtn');
+            const modal = document.getElementById('adModal');
+            const countdownEl = document.getElementById('adCountdown');
+            
+            btn.disabled = true;
+            btn.textContent = 'Loading Ad...';
+            
+            // Show modal with ad
+            modal.classList.add('active');
+
+            let countdown = 15;
+            countdownEl.textContent = countdown;
+            
+            const timer = setInterval(() => {
+                countdown--;
+                countdownEl.textContent = countdown;
+
+                if (countdown < 0) {
+                    clearInterval(timer);
+                    modal.classList.remove('active');
+                    creditAdView();
+                }
+            }, 1000);
+        }
+
+        async function creditAdView() {
+            try {
+                const response = await fetch(`${API_URL}/ads/credit`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ adType: 'video' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success message
+                    alert(`✅ Congratulations! You earned $${data.earned.toFixed(2)}!\n\nNew balance: $${data.balance.toFixed(2)}\nAds watched today: ${data.adsWatchedToday}/${data.dailyLimit}`);
+                    loadProfile();
+                } else {
+                    alert(data.error || 'Failed to credit ad view');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                adWatching = false;
+                const btn = document.getElementById('watchAdBtn');
+                btn.disabled = false;
+                btn.textContent = 'Watch Ad Now';
+            }
+        }
+
+        async function requestWithdrawal() {
+            const paypalEmail = document.getElementById('paypalEmail').value;
+            
+            if (!paypalEmail) {
+                alert('Please enter your PayPal email');
+                return;
+            }
+
+            if (!confirm('Request withdrawal? This will be processed within 24-48 hours.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/withdraw/request`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ method: 'paypal', paypalEmail })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ ${data.message}\n\nAmount: $${data.amount.toFixed(2)}`);
+                    loadProfile();
+                } else {
+                    alert(data.error || 'Withdrawal failed');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '/';
+            }
+        }
+
+        // Load profile on page load
+        loadProfile();
+        
+        // Refresh profile every 30 seconds
+        setInterval(loadProfile, 30000);
+    </script>
+</body>
+</html>
