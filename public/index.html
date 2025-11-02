@@ -5,78 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EarnView - Watch Ads & Earn Money</title>
     <script src="https://cdn.tailwindcss.com"></script>
+	<script type='text/javascript' src='//pl27973831.effectivegatecpm.com/00/e7/c9/00e7c9685187ee43dcbe0b25665b2e76.js'></script>
 </head>
 <body class="bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 min-h-screen">
     <div class="container mx-auto px-4 py-12">
         <div class="max-w-md mx-auto bg-white rounded-2xl shadow-2xl p-8">
             <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
                 <h1 class="text-4xl font-bold text-gray-800 mb-2">EarnView</h1>
-                <p class="text-gray-600">Watch ads, earn real money</p>
+                <p class="text-gray-600">Watch ads, earn real money instantly</p>
             </div>
+
             <div id="loginForm">
-                <h2 class="text-2xl font-bold mb-6">Login</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Login</h2>
                 <form onsubmit="handleLogin(event)">
-                    <input type="email" id="loginEmail" required placeholder="Email" class="w-full px-3 py-2 border rounded-lg mb-4">
-                    <input type="password" id="loginPassword" required placeholder="Password" class="w-full px-3 py-2 border rounded-lg mb-6">
-                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold">Login</button>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <input type="email" id="loginEmail" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input type="password" id="loginPassword" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition">
+                        Login
+                    </button>
                 </form>
-                <p class="text-center mt-4"><a href="#" onclick="toggleForms()" class="text-blue-600">Register</a></p>
+                <p class="text-center mt-4 text-gray-600">
+                    Don't have an account? 
+                    <a href="#" onclick="toggleForms()" class="text-blue-600 font-semibold">Register</a>
+                </p>
             </div>
+
             <div id="registerForm" style="display: none;">
-                <h2 class="text-2xl font-bold mb-6">Register</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Register</h2>
                 <form onsubmit="handleRegister(event)">
-                    <input type="text" id="regUsername" required placeholder="Username" class="w-full px-3 py-2 border rounded-lg mb-4">
-                    <input type="email" id="regEmail" required placeholder="Email" class="w-full px-3 py-2 border rounded-lg mb-4">
-                    <input type="password" id="regPassword" required placeholder="Password" class="w-full px-3 py-2 border rounded-lg mb-4">
-                    <input type="text" id="regReferral" placeholder="Referral Code (optional)" class="w-full px-3 py-2 border rounded-lg mb-6">
-                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-3 rounded-lg font-semibold">Register</button>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+                        <input type="text" id="regUsername" required minlength="3" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <input type="email" id="regEmail" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input type="password" id="regPassword" required minlength="6" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Referral Code (Optional)</label>
+                        <input type="text" id="regReferral" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition">
+                        Register
+                    </button>
                 </form>
-                <p class="text-center mt-4"><a href="#" onclick="toggleForms()" class="text-blue-600">Login</a></p>
+                <p class="text-center mt-4 text-gray-600">
+                    Already have an account? 
+                    <a href="#" onclick="toggleForms()" class="text-blue-600 font-semibold">Login</a>
+                </p>
+            </div>
+
+            <div class="mt-8 pt-6 border-t grid grid-cols-3 gap-4">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-purple-600">$0.05</div>
+                    <div class="text-xs text-gray-600">per ad</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-blue-600">500</div>
+                    <div class="text-xs text-gray-600">ads/day</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-cyan-600">$25</div>
+                    <div class="text-xs text-gray-600">max/day</div>
+                </div>
             </div>
         </div>
     </div>
+
     <script>
         const API_URL = '/api';
+
         function toggleForms() {
-            document.getElementById('loginForm').style.display = document.getElementById('loginForm').style.display === 'none' ? 'block' : 'none';
-            document.getElementById('registerForm').style.display = document.getElementById('registerForm').style.display === 'none' ? 'block' : 'none';
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+            registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
         }
+
         async function handleLogin(e) {
             e.preventDefault();
-            const response = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: document.getElementById('loginEmail').value,
-                    password: document.getElementById('loginPassword').value
-                })
-            });
-            const data = await response.json();
-            if (data.success) {
-                localStorage.setItem('token', data.token);
-                window.location.href = '/dashboard.html';
-            } else {
-                alert(data.error || 'Login failed');
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = '/dashboard.html';
+                } else {
+                    alert(data.error || 'Login failed');
+                }
+            } catch (err) {
+                alert('Connection error: ' + err.message);
             }
         }
+
         async function handleRegister(e) {
             e.preventDefault();
-            const response = await fetch(`${API_URL}/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: document.getElementById('regUsername').value,
-                    email: document.getElementById('regEmail').value,
-                    password: document.getElementById('regPassword').value,
-                    referralCode: document.getElementById('regReferral').value
-                })
-            });
-            const data = await response.json();
-            if (data.success) {
-                alert('Registration successful!');
-                toggleForms();
-            } else {
-                alert(data.error || 'Registration failed');
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const referralCode = document.getElementById('regReferral').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password, referralCode })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Registration successful! Please login.');
+                    toggleForms();
+                } else {
+                    alert(data.error || 'Registration failed');
+                }
+            } catch (err) {
+                alert('Connection error: ' + err.message);
             }
         }
     </script>
