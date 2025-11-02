@@ -1,3 +1,4 @@
+// server.js - PostgreSQL Version with 500 ads daily limit
 require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
@@ -271,14 +272,15 @@ app.post('/api/ads/credit', adViewLimiter, authenticateToken, async (req, res) =
       return res.status(403).json({ error: 'Account not active' });
     }
 
+    // Check daily limit - CHANGED TO 500
     const todayCount = await client.query(
       'SELECT COUNT(*) as count FROM ad_views WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE',
       [userId]
     );
 
-    if (parseInt(todayCount.rows[0].count) >= 20) {
+    if (parseInt(todayCount.rows[0].count) >= 500) {
       await client.query('ROLLBACK');
-      return res.status(429).json({ error: 'Daily limit reached (20 ads)' });
+      return res.status(429).json({ error: 'Daily limit reached (500 ads)' });
     }
 
     const recentViews = await client.query(
@@ -346,7 +348,7 @@ app.post('/api/ads/credit', adViewLimiter, authenticateToken, async (req, res) =
       balance: parseFloat(updated.rows[0].balance),
       totalEarned: parseFloat(updated.rows[0].total_earned),
       adsWatchedToday: parseInt(todayCount.rows[0].count) + 1,
-      dailyLimit: 20
+      dailyLimit: 500  // CHANGED TO 500
     });
 
   } catch (err) {
@@ -565,7 +567,8 @@ app.listen(PORT, '0.0.0.0', () => {
   ╔════════════════════════════════════════╗
   ║   EarnView Platform (PostgreSQL)       ║
   ║   Port: ${PORT}                           ║
-  ║   Environment: ${process.env.NODE_ENV}  ║
+  ║   Daily Limit: 500 ads                 ║
+  ║   Max Earning: $25/day per user        ║
   ╚════════════════════════════════════════╝
   
   📊 Admin Panel: http://localhost:${PORT}/admin.html
